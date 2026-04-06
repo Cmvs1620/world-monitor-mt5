@@ -1,0 +1,11 @@
+{
+  "debug": false,
+  "log_level": "INFO",
+  "mt5_files_path": "C:\\Users\\your_username\\AppData\\Roaming\\MetaQuotes\\Terminal\\your_terminal_id\\MQL5\\Files",
+  "worldmonitor_poll_interval_seconds": 300,
+  "signal_expiry_seconds": 3600,
+  "risk_per_trade_percent": 1.0,
+  "max_concurrent_positions": 3,
+  "telegram_enabled": true,
+  "telegram_alerts": ["TRADE_OPENED", "TRADE_CLOSED", "SIGNAL_GENERATED", "ERROR"]
+}
