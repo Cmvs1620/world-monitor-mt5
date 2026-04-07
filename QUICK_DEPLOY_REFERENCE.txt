@@ -1,0 +1,148 @@
+================================================================================
+QUICK REFERENCE: EA DEPLOYMENT STEPS FOR WINDOWS STRATOS
+================================================================================
+
+STEP 1: COMPILE (if .ex5 doesn't exist)
+-------
+1. Open MT5 → Tools → MetaEditor (F4)
+2. File → Open → [project]\ea\GeoSignalEA.mq5
+3. Press F5 to compile
+4. Verify: "0 error(s)" at bottom
+5. Done! .ex5 created in MT5 Experts folder
+
+STEP 2: DEPLOY - Automated (RECOMMENDED)
+-------
+1. Open PowerShell as Administrator
+2. cd to project folder
+3. Run: .\deploy-ea-to-mt5.ps1 -RestartMT5 $true
+4. Wait for script to complete
+5. Done! EA copied and MT5 restarted
+
+STEP 2 ALTERNATIVE: Deploy - Manual
+-------
+1. Find MT5 Experts folder:
+   C:\Users\[USERNAME]\AppData\Roaming\MetaQuotes\Terminal\[ID]\MQL5\Experts\
+2. Copy GeoSignalEA.ex5 to that folder
+3. Close MT5 completely
+4. Open MT5 again
+5. Done!
+
+STEP 3: ADD TO CHART
+-------
+1. In MT5, View → Navigator (Ctrl+N)
+2. Expand "Expert Advisors"
+3. Right-click "GeoSignalEA" → "Add to Chart"
+4. Configure parameters (or use defaults)
+5. Click "Next" → "Finish"
+
+STEP 4: VERIFY
+-------
+1. Look for green smiley ✓ in top-right of chart
+2. If sad face ✗:
+   - Check Tools → Options → Expert Advisors tab
+   - Enable "Allow automated trading"
+   - Check Journal tab (Alt+T) for error messages
+
+STEP 5: MONITOR
+-------
+1. Open Journal tab (Alt+T)
+2. Should see: "[EA] GeoSignal EA Started"
+3. EA will check signal.json every 60 seconds
+4. Watch for trade signals and execution messages
+
+================================================================================
+CRITICAL SETTINGS
+================================================================================
+
+Tools → Options → Expert Advisors tab:
+  ✓ Allow Live Trading: CHECK
+  ✓ Allow DLL imports: CHECK
+  ✓ Allow automated trading: CHECK
+
+EA Input Parameters (when adding to chart):
+  EA_ENABLED = true
+  EA_TRADING_ENABLED = false  (set to true for live trading)
+  SIGNAL_FILE_PATH = signal.json
+
+================================================================================
+DOCUMENTATION
+================================================================================
+
+For detailed instructions, see:
+  EA_DEPLOYMENT_GUIDE.md        (comprehensive step-by-step guide)
+  ea/DEPLOYMENT_STATUS.txt      (checklist and troubleshooting)
+  deploy-ea-to-mt5.ps1          (automated deployment script)
+  DEPLOYMENT_SUMMARY.txt        (overview and next steps)
+
+================================================================================
+SIGNAL FILE
+================================================================================
+
+The EA reads from:
+  C:\Users\[USERNAME]\AppData\Roaming\MetaQuotes\Terminal\[ID]\MQL5\Files\signal.json
+
+Python engine writes JSON with this structure:
+{
+  "timestamp": "2026-04-07T12:00:00Z",
+  "event_id": "event_123456",
+  "action": "BUY",
+  "symbol": "XAUUSD",
+  "confidence": 0.85,
+  "volume": 1.0,
+  "stop_loss": 2050.0,
+  "take_profit": 2070.0
+}
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+EA not visible in Navigator?
+  → Ensure .ex5 is in Experts folder
+  → Restart MT5 completely
+
+Sad face ✗ on chart?
+  → Check Journal (Alt+T) for error messages
+  → Enable "Allow automated trading" in Tools → Options
+  → Check signal.json exists in Files folder
+
+EA not executing signals?
+  → Check signal.json file format
+  → Enable DEBUG_MODE for verbose logging
+  → Verify SIGNAL_FILE_PATH matches actual path
+
+================================================================================
+SOURCE FILES (on Stratos)
+================================================================================
+
+ea\GeoSignalEA.mq5              Main EA code (514 lines)
+ea\includes\signal_struct.mqh   Signal structure definitions
+ea\includes\risk_config.mqh     Risk parameters and helpers
+
+================================================================================
+SUCCESS INDICATORS
+================================================================================
+
+✓ EA appears in Navigator → Expert Advisors → GeoSignalEA
+✓ Green smiley face shows in top-right corner of chart
+✓ Journal shows "[EA] GeoSignal EA Started"
+✓ Journal shows signal reading attempts every 60 seconds
+✓ No red error messages in Journal
+
+================================================================================
+NEXT PHASES
+================================================================================
+
+Phase 3 Task 4: Test EA Signal Reading
+  - Verify signal.json parsing
+  - Monitor execution logic
+
+Phase 3 Task 5: Test EA Risk Gates
+  - Verify position sizing
+  - Test risk limits
+
+Phase 3 Task 6: Test Python-EA Integration
+  - End-to-end signal flow
+  - Monitor trade execution
+
+================================================================================
