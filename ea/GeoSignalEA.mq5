@@ -125,13 +125,10 @@ void OnTick()
         return;
     }
 
-    // Check bridge timeout: execute if no recent execution
-    if((current_time - last_execution_time) > BRIDGE_TIMEOUT_SECONDS)
-    {
-        if(DEBUG_MODE)
-            LogMessage("Bridge timeout exceeded, executing fallback signal");
-        ExecuteSignal(signal);
-    }
+    // Execute signal (validation and duplicate protection handled inside ExecuteSignal)
+    // No timeout condition: rely on Python bridge to not send duplicate events
+    // and event_id tracking to prevent re-execution of same signal
+    ExecuteSignal(signal);
 }
 
 //+------------------------------------------------------------------+
