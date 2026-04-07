@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-04-06T10:05:00Z",
+  "event_id": "test-sell-001",
+  "event_title": "Test SELL Signal - EUR/USD",
+  "action": "SELL",
+  "symbol": "EURUSD",
+  "confidence": 0.65,
+  "volume": 1.0,
+  "stop_loss": 1.1050,
+  "take_profit": 1.0950,
+  "rationale": "Test downside signal on EUR/USD"
+}

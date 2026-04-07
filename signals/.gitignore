@@ -1,0 +1,16 @@
+# Ignore runtime signal files
+signal.json
+heartbeat.json
+*.log
+
+# Ignore cache files
+.worldmonitor_cache.db
+*.db
+__pycache__/
+*.pyc
+
+# But track test signals in tests directory
+!../tests/ea_test_signals/
+!../tests/ea_test_signals/*.json
+!../tests/ea_test_signals/*.md
+!../tests/ea_test_signals/*.py
