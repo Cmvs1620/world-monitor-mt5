@@ -1,0 +1,171 @@
+================================================================================
+GeoSignal Expert Advisor - Deployment Status
+================================================================================
+
+Status: READY FOR COMPILATION & DEPLOYMENT
+Date: 2026-04-07
+
+================================================================================
+SOURCE FILES VERIFICATION
+================================================================================
+
+Main EA Code:
+  File: ea/GeoSignalEA.mq5
+  Lines: 514
+  Status: VALID
+  Size: 18KB
+  Includes: <Trade\Trade.mqh>, signal_struct.mqh, risk_config.mqh
+
+Include Files:
+  File: ea/includes/signal_struct.mqh
+  Lines: 75
+  Status: VALID
+  Size: 3.1KB
+  Purpose: TradeSignal and ExecutionResult structures
+
+  File: ea/includes/risk_config.mqh
+  Lines: 171
+  Status: VALID
+  Size: 7.0KB
+  Purpose: Risk parameters, instrument config, helper functions
+
+================================================================================
+COMPILATION STATUS (macOS)
+================================================================================
+
+Current Machine: Apple macOS (Darwin)
+Can Compile Locally: NO (MetaEditor is Windows-only)
+Compiled Binary (.ex5): NOT YET PRESENT
+
+Next Steps on Windows Stratos:
+  1. Copy all MQL5 source files to Windows Stratos
+  2. Open MetaEditor in MT5
+  3. Load ea/GeoSignalEA.mq5
+  4. Press F5 to compile
+  5. Compiled .ex5 will be generated at:
+     C:\Users\[USERNAME]\AppData\Roaming\MetaQuotes\Terminal\[TERMINAL_ID]\MQL5\Experts\GeoSignalEA.ex5
+
+================================================================================
+DEPLOYMENT CHECKLIST
+================================================================================
+
+Before Deployment:
+  [ ] GeoSignalEA.ex5 compiled on Windows Stratos
+  [ ] File size > 100KB (typical for compiled EA)
+  [ ] All include files present on Stratos
+  [ ] MT5 installed and previously run
+
+Deployment Steps:
+  [ ] Copy GeoSignalEA.ex5 to MT5 Experts folder
+  [ ] Run deploy-ea-to-mt5.ps1 script (automated copy)
+  [ ] Restart MetaTrader 5 completely
+  [ ] Open Navigator (View → Navigator or Ctrl+N)
+  [ ] Find GeoSignalEA in Expert Advisors
+  [ ] Right-click → Add to Chart
+  [ ] Configure input parameters (or accept defaults)
+  [ ] Verify green smiley ✓ in chart corner
+
+Verification:
+  [ ] Smiley face ✓ shows in chart corner
+  [ ] Journal tab shows "[EA] GeoSignal EA Started"
+  [ ] No errors in Journal
+  [ ] signal.json file exists in MT5 Files folder
+  [ ] Python engine can write to signal.json
+
+================================================================================
+INPUT PARAMETERS
+================================================================================
+
+Critical Parameters:
+  EA_ENABLED               = true      (enable/disable EA)
+  EA_TRADING_ENABLED       = false     (demo mode by default)
+  POLL_INTERVAL_SECONDS    = 60        (check signal.json every 60s)
+  SIGNAL_FILE_PATH         = "signal.json"
+
+Risk Management:
+  MAX_CONCURRENT_POSITIONS = 5         (max open positions)
+  RISK_PER_TRADE_PERCENT   = 2.0       (risk per trade)
+  MAX_DAILY_LOSS_PERCENT   = 10.0      (stop if daily loss exceeds)
+  MAX_DRAWDOWN_PERCENT     = 15.0      (stop if drawdown exceeds)
+
+Debugging:
+  DEBUG_MODE               = false     (set to true for verbose Journal output)
+  BRIDGE_TIMEOUT_SECONDS   = 30        (timeout for Python bridge)
+
+================================================================================
+SIGNAL FILE STRUCTURE
+================================================================================
+
+The EA expects signal.json in MT5 Files folder:
+  C:\Users\[USERNAME]\AppData\Roaming\MetaQuotes\Terminal\[TERMINAL_ID]\MQL5\Files\signal.json
+
+Expected JSON Structure:
+  {
+    "timestamp": "2026-04-07T12:00:00Z",
+    "event_id": "event_123456",
+    "event_title": "Geopolitical Event",
+    "action": "BUY",
+    "symbol": "XAUUSD",
+    "confidence": 0.85,
+    "volume": 1.0,
+    "stop_loss": 2050.0,
+    "take_profit": 2070.0,
+    "rationale": "Risk event increases safe-haven demand"
+  }
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Issue: EA not visible in Navigator
+  Solution: Verify .ex5 file in Experts folder, restart MT5
+
+Issue: Sad face ✗ in chart corner
+  Solution: Enable "Allow automated trading" in Tools → Options
+            Check Journal for error messages
+            Verify signal.json file format
+
+Issue: EA not reading signal.json
+  Solution: Enable DEBUG_MODE to see file read attempts
+            Verify file path matches SIGNAL_FILE_PATH parameter
+            Check Python engine is writing to correct location
+
+Issue: "Allow automated trading" grayed out
+  Solution: Set "Allow DLL imports" to true first
+            Account may need to be demo/live enabled
+
+================================================================================
+DEPLOYMENT DOCUMENTATION
+================================================================================
+
+See EA_DEPLOYMENT_GUIDE.md for:
+  - Step-by-step deployment instructions
+  - Compilation guide if needed
+  - Signal file location and format
+  - Troubleshooting guide
+  - Input parameter reference
+
+See deploy-ea-to-mt5.ps1 for:
+  - Automated PowerShell deployment script
+  - Option to restart MT5 automatically
+  - File verification and error checking
+
+================================================================================
+NEXT PHASE
+================================================================================
+
+Phase 3 Task 4: Test EA Signal Reading
+  - Verify signal.json is read correctly by EA
+  - Test signal parsing and execution logic
+  - Monitor Journal for processing messages
+
+Phase 3 Task 5: Test EA Risk Gates
+  - Verify risk thresholds work correctly
+  - Test position size calculation
+  - Confirm risk limits prevent over-leverage
+
+Phase 3 Task 6: Test Python-EA Integration
+  - End-to-end test of Python → signal.json → MT5 EA flow
+  - Monitor actual signal generation and EA execution
+
+================================================================================

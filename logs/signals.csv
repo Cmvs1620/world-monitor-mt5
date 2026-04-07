@@ -1,1 +1,4 @@
 timestamp,event_id,classification,confidence,symbol,action,volume,rationale,status
+2026-04-07T16:14:45.361258Z,event-1,classified,0.8000,EURUSD,BUY,1.0000,Strong BUY,passed
+2026-04-07T16:14:45.361493Z,event-2,classified,0.2000,HOLD,HOLD,0.0000,Weak signal,blocked
+2026-04-07T16:14:45.361722Z,event-3,classified,0.7000,GBPUSD,SELL,1.0000,Strong SELL,passed

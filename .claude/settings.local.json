@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod +x /tmp/verify_setup.sh)",
+      "Bash(/tmp/verify_setup.sh)",
+      "Bash(python3 -m py_compile validate.py)",
+      "Bash(python3 validate.py)",
+      "Bash(bash /tmp/check_files.sh)",
+      "Bash(python3 -m py_compile \"/Users/carl-maurits.vonschantz/World monitor claude/engine/__init__.py\")",
+      "Bash(python -m pytest tests/test_classifier.py -v)",
+      "Bash(python3 -m pytest tests/test_classifier.py -v)",
+      "Bash(export ANTHROPIC_API_KEY=$\\(grep ANTHROPIC_API_KEY .env)",
+      "Bash(python3 -m pytest tests/test_classifier.py -v --tb=short)",
+      "Bash(python3 -m pytest tests/test_classifier.py -v --tb=line)",
+      "Bash(python3 -m py_compile engine/classifier.py tests/test_classifier.py)",
+      "Bash(python -m pytest tests/test_risk_gate.py -v)",
+      "Bash(/usr/bin/python3 -m pytest tests/test_risk_gate.py -v)",
+      "Bash(python -m py_compile engine/telegram_bot.py)",
+      "Bash(python3 -m py_compile engine/telegram_bot.py)",
+      "Bash(python3 -m py_compile \"/Users/carl-maurits.vonschantz/World monitor claude/run.py\")",
+      "Bash(python -m pytest tests/test_integration.py -v)",
+      "Bash(python3 -m pytest tests/test_integration.py -v)",
+      "Bash(python3 -m pytest tests/test_integration.py -v --tb=short)",
+      "Bash(python3 -m pytest tests/ -v)",
+      "Bash(python3 -m pytest tests/test_integration.py -v --co)"
+    ]
+  }
+}

@@ -1,1 +1,39 @@
-[]
+[
+  {
+    "timestamp": "2026-04-07T16:14:45.361258Z",
+    "event_id": "event-1",
+    "event_title": "Event 1",
+    "event_severity": "high",
+    "action": "BUY",
+    "symbol": "EURUSD",
+    "confidence": 0.8,
+    "volume": 1.0,
+    "rationale": "Strong BUY",
+    "status": "passed"
+  },
+  {
+    "timestamp": "2026-04-07T16:14:45.361493Z",
+    "event_id": "event-2",
+    "event_title": "Event 2",
+    "event_severity": "medium",
+    "action": "HOLD",
+    "symbol": "HOLD",
+    "confidence": 0.2,
+    "volume": 0.0,
+    "rationale": "Weak signal",
+    "status": "blocked",
+    "block_reason": "HOLD action signals are not opened as trades"
+  },
+  {
+    "timestamp": "2026-04-07T16:14:45.361722Z",
+    "event_id": "event-3",
+    "event_title": "Event 3",
+    "event_severity": "low",
+    "action": "SELL",
+    "symbol": "GBPUSD",
+    "confidence": 0.7,
+    "volume": 1.0,
+    "rationale": "Strong SELL",
+    "status": "passed"
+  }
+]

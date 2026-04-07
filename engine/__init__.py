@@ -23,4 +23,7 @@ except ImportError:
 
 __all__ = [
     "WorldMonitorClient",
+    "EventClassifier",
+    "RiskGate",
+    "SignalRouter",
 ]
