@@ -26,7 +26,26 @@ if (-not $SkipPython) {
 
     if (-not $pythonExists) {
         Write-Host "Installing Python 3.11..." -ForegroundColor Cyan
-        winget install --id Python.Python.3.11 --accept-package-agreements --accept-source-agreements -e
+        $wingetExists = $null -ne (Get-Command winget -ErrorAction SilentlyContinue)
+
+        if ($wingetExists) {
+            winget install --id Python.Python.3.11 --accept-package-agreements --accept-source-agreements -e
+        } else {
+            Write-Host "winget not found, downloading Python directly..." -ForegroundColor Yellow
+            $pythonInstaller = "$env:TEMP\python-3.11-installer.exe"
+            $pythonUrl = "https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe"
+
+            Write-Host "Downloading Python 3.11.9..." -ForegroundColor Cyan
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            Invoke-WebRequest -Uri $pythonUrl -OutFile $pythonInstaller -ErrorAction Stop
+
+            Write-Host "Running Python installer..." -ForegroundColor Cyan
+            & $pythonInstaller /quiet InstallAllUsers=1 PrependPath=1 | Out-Null
+
+            Remove-Item $pythonInstaller -Force
+
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+        }
         Write-Host "[OK] Python installed" -ForegroundColor Green
     }
 } else {
@@ -45,7 +64,26 @@ if (-not $SkipGit) {
 
     if (-not $gitExists) {
         Write-Host "Installing Git..." -ForegroundColor Cyan
-        winget install --id Git.Git --accept-package-agreements --accept-source-agreements -e
+        $wingetExists = $null -ne (Get-Command winget -ErrorAction SilentlyContinue)
+
+        if ($wingetExists) {
+            winget install --id Git.Git --accept-package-agreements --accept-source-agreements -e
+        } else {
+            Write-Host "winget not found, downloading Git directly..." -ForegroundColor Yellow
+            $gitInstaller = "$env:TEMP\git-installer.exe"
+            $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.43.0.windows.1/Git-2.43.0-64-bit.exe"
+
+            Write-Host "Downloading Git..." -ForegroundColor Cyan
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            Invoke-WebRequest -Uri $gitUrl -OutFile $gitInstaller -ErrorAction Stop
+
+            Write-Host "Running Git installer..." -ForegroundColor Cyan
+            & $gitInstaller /SILENT /NORESTART | Out-Null
+
+            Remove-Item $gitInstaller -Force
+
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+        }
         Write-Host "[OK] Git installed" -ForegroundColor Green
     }
 } else {
