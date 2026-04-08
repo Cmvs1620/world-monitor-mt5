@@ -1,0 +1,201 @@
+================================================================================
+QUICK START: Python-EA Integration Test (5 Commands)
+================================================================================
+
+PURPOSE:
+Run end-to-end integration test validating signal flow from Python engine to
+MT5 Expert Advisor execution in ~10-15 minutes.
+
+PREREQUISITES:
+- Python engine code in /root/signal-engine/
+- MT5 with GeoSignal EA deployed and running
+- signal.json path configured in EA properties
+- Network access: Mac ↔ Stratos (for file sync)
+
+================================================================================
+STEP 1: Start Python Engine (10-second poll interval for testing)
+================================================================================
+
+COMMAND:
+  cd /root/signal-engine
+  python run.py
+
+EXPECTED OUTPUT:
+  [2026-04-07 14:23:45] Engine started
+  [2026-04-07 14:23:45] Polling WorldMonitor API every 10 seconds
+  [2026-04-07 14:23:55] Fetched 2 new events from WorldMonitor
+  [2026-04-07 14:23:56] Classified event: BUY EURUSD (0.92 confidence)
+  [2026-04-07 14:23:56] Signal written to signals/signal.json
+
+TIME: ~30 seconds
+
+================================================================================
+STEP 2: Verify Signal File Updates
+================================================================================
+
+COMMAND:
+  watch -n 2 'tail -2 signals/signal.json | cat'
+
+OR (single check):
+  cat signals/signal.json
+
+EXPECTED OUTPUT:
+  {
+    "timestamp": "2026-04-07T14:23:56.123Z",
+    "signals": [
+      {
+        "event_id": "evt_abc123",
+        "symbol": "EURUSD",
+        "action": "BUY",
+        "confidence": 0.92,
+        "reason": "Bullish momentum detected"
+      }
+    ]
+  }
+
+VERIFICATION:
+  ✓ Timestamp updates every 10 seconds
+  ✓ New event_ids appear
+  ✓ Confidence scores between 0.5-1.0
+  ✓ Actions are BUY/SELL/HOLD
+
+TIME: ~2-3 minutes (observe for at least 2-3 cycles)
+
+================================================================================
+STEP 3: Copy signal.json to MT5 Files Folder
+================================================================================
+
+OPTION A: Manual Copy (Stratos Windows)
+  Copy-Item -Path "\\mac\signal-engine\signals\signal.json" `
+            -Destination "C:\Users\<user>\AppData\Roaming\MetaTrader 5\MQL5\Files\signal.json" `
+            -Force
+
+OPTION B: Automated Sync (from signal-engine directory)
+  cd /root/signal-engine
+  python tests/ea_python_integration/sync_signal_to_mt5.py \
+    --mt5-path "C:\Users\<user>\AppData\Roaming\MetaTrader 5\MQL5\Files" \
+    --watch 300
+
+EXPECTED OUTPUT:
+  [14:24:12] Syncing signal.json...
+  [14:24:12] Copied 1,234 bytes to MT5 Files folder
+  [14:24:12] New event_ids: evt_abc123
+
+TIME: <5 seconds per sync
+
+================================================================================
+STEP 4: Monitor EA Execution in MT5 Journal
+================================================================================
+
+ACTION:
+  1. Open MT5 Terminal
+  2. Go to: View → Journal
+  3. Filter for "GeoSignal EA"
+  4. Watch for execution messages
+
+EXPECTED OUTPUT (in MT5 Journal):
+  [14:24:15] GeoSignal EA: Signal received - BUY EURUSD
+  [14:24:15] GeoSignal EA: Risk check passed (position size: 0.1 lots)
+  [14:24:16] GeoSignal EA: Executing BUY EURUSD @ 1.0856
+  [14:24:16] GeoSignal EA: Order ticket: 123456789
+  [14:24:16] GeoSignal EA: Heartbeat written to signal.json
+
+VERIFICATION:
+  ✓ "[EA] Executing" messages appear
+  ✓ Order tickets are numeric (>0)
+  ✓ New trades appear in MT5 Trades panel
+  ✓ Entry prices are reasonable (not extreme)
+
+TIME: ~5-10 minutes (observe for multiple trades)
+
+================================================================================
+STEP 5: Verify Execution Report & Success Criteria
+================================================================================
+
+COMMAND (from signal-engine directory):
+  python tests/ea_python_integration/verify_trade_execution.py
+
+EXPECTED OUTPUT:
+  ┌──────────────────────────────────────────┐
+  │  EXECUTION REPORT                        │
+  ├──────────────────────────────────────────┤
+  │ Signals Generated: 42                    │
+  │ Signals Executed:  18 (42.9%)            │
+  │ Failed Signals:    2 (4.8%)              │
+  │ Risk Gates Hit:    22 (52.4%)            │
+  ├──────────────────────────────────────────┤
+  │ Avg Latency:       2m 34s (min/max)      │
+  │ All Tickets Valid: YES                   │
+  │ Heartbeat Match:   18/18 (100%)          │
+  └──────────────────────────────────────────┘
+
+  RESULT: PASS ✓
+
+VERIFY AGAINST SUCCESS_CRITERIA.md:
+  Go through each checkbox in SUCCESS_CRITERIA.md
+  Mark PASS if all 15+ criteria are met
+
+TIME: ~5 minutes
+
+================================================================================
+TOTAL TEST DURATION: ~15-20 minutes
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Issue: signal.json not updating
+  → Check Python engine logs: tail -f logs/engine.log
+  → Verify API connectivity: curl https://worldmonitor-api/events
+  → Restart engine: Ctrl+C, then python run.py
+
+Issue: EA not reading signal
+  → Check MT5 Files path in EA properties
+  → Verify file permissions in MT5 Files folder
+  → Check MT5 Journal for permission errors
+
+Issue: Trade not executing
+  → Check MT5 Account balance and margin
+  → Review risk gate logs: grep "risk" logs/engine.log
+  → Check EA_TRADING_ENABLED flag
+
+Issue: High latency (>5 minutes)
+  → Reduce POLL_INTERVAL_SECONDS in run.py (set to 10 for testing)
+  → Check network latency: ping stratos.example.com
+  → Monitor MT5 disk I/O performance
+
+See TROUBLESHOOTING.md for complete diagnosis guide.
+
+================================================================================
+SUCCESS CRITERIA: Test Passes When...
+================================================================================
+
+✓ Python engine running and polling every 10 seconds
+✓ signal.json updates every 10 seconds
+✓ signal.json copies to MT5 Files within 60 seconds
+✓ EA reads signal and logs execution messages
+✓ Trades appear in MT5 Trades panel
+✓ Order tickets are valid (numeric, positive)
+✓ heartbeat.json contains execution records
+✓ Python signal_id matches heartbeat signal_id
+✓ Average latency < 5 minutes (signal to execution)
+✓ All executed trades have entry prices
+✓ No critical errors in logs
+✓ Risk rules applied consistently
+
+If all criteria ✓, test PASSES. Otherwise, see TROUBLESHOOTING.md.
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+After successful test:
+1. Save EXECUTION_REPORT.txt with timestamp
+2. Record results in TEST_RESULTS_TEMPLATE.md
+3. Archive logs: cp logs/*.log results/test_YYYY-MM-DD/
+4. Review SIGNAL_PIPELINE_COMPARISON.md for consistency checks
+5. Document any anomalies in TROUBLESHOOTING.md updates
+
+For detailed step-by-step guide, see E2E_TEST_PROCEDURE.md
+For troubleshooting, see TROUBLESHOOTING.md
+For success criteria, see SUCCESS_CRITERIA.md
