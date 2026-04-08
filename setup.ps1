@@ -226,7 +226,7 @@ Write-Host "  [OK] Created config/settings.json template" -ForegroundColor Gray
 Write-Host "`n=== Setup Complete ===" -ForegroundColor Green
 Write-Host "`nNext steps:" -ForegroundColor Cyan
 Write-Host "  1. Edit .env with your API keys" -ForegroundColor Gray
-Write-Host "  2. Edit config/settings.json → set mt5_files_path" -ForegroundColor Gray
+Write-Host "  2. Edit config/settings.json -> set mt5_files_path" -ForegroundColor Gray
 Write-Host "  3. Run: python validate.py" -ForegroundColor Gray
 Write-Host "`nActivate venv next time with:" -ForegroundColor Cyan
 Write-Host "  .\venv\Scripts\Activate.ps1" -ForegroundColor Gray
