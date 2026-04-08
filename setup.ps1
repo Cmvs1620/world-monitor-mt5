@@ -104,7 +104,7 @@ foreach ($dir in $dirs) {
 # 4. Create __init__.py files
 Write-Host "  Creating Python package structure..." -ForegroundColor Gray
 foreach ($dir in @("engine", "bridge")) {
-    $initFile = Join-Path $ProjectRoot $dir "__init__.py"
+    $initFile = Join-Path (Join-Path $ProjectRoot $dir) "__init__.py"
     if (-not (Test-Path $initFile)) {
         "" | Out-File -FilePath $initFile -Encoding UTF8
         Write-Host "  [OK] Created $dir/__init__.py" -ForegroundColor Gray
