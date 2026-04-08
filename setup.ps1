@@ -120,15 +120,12 @@ if (-not (Test-Path (Join-Path $ProjectRoot "venv"))) {
     Write-Host "[OK] Virtual environment exists" -ForegroundColor Green
 }
 
-# Activate venv
-$venvActivate = Join-Path $ProjectRoot "venv\Scripts\Activate.ps1"
-& $venvActivate
-
 # 6. Install Python Dependencies
 Write-Host "`n[5/6] Installing Python dependencies..." -ForegroundColor Yellow
 $reqFile = Join-Path $ProjectRoot "requirements.txt"
 if (Test-Path $reqFile) {
-    pip install -r $reqFile -q
+    $venvPip = Join-Path $ProjectRoot "venv\Scripts\pip.exe"
+    & $venvPip install -r $reqFile -q
     Write-Host "[OK] Dependencies installed" -ForegroundColor Green
 } else {
     Write-Host "[WARNING] requirements.txt not found, skipping pip install" -ForegroundColor Yellow
