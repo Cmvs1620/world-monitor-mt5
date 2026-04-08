@@ -124,8 +124,14 @@ if (-not (Test-Path (Join-Path $ProjectRoot "venv"))) {
 Write-Host "`n[5/6] Installing Python dependencies..." -ForegroundColor Yellow
 $reqFile = Join-Path $ProjectRoot "requirements.txt"
 if (Test-Path $reqFile) {
-    $venvPip = Join-Path $ProjectRoot "venv\Scripts\pip.exe"
-    & $venvPip install -r $reqFile -q
+    # Use venv python to run pip
+    $venvPython = Join-Path $ProjectRoot "venv\Scripts\python.exe"
+    if (Test-Path $venvPython) {
+        & $venvPython -m pip install -r $reqFile -q
+    } else {
+        Write-Host "[WARNING] venv python not found, trying global python..." -ForegroundColor Yellow
+        python -m pip install -r $reqFile -q
+    }
     Write-Host "[OK] Dependencies installed" -ForegroundColor Green
 } else {
     Write-Host "[WARNING] requirements.txt not found, skipping pip install" -ForegroundColor Yellow
