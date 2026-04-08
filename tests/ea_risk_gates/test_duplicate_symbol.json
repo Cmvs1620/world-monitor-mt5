@@ -1,0 +1,56 @@
+{
+  "test_name": "Duplicate Symbol Blocking Test",
+  "test_description": "Validates that EA rejects attempts to open a second position in the same symbol",
+  "risk_gate": "DUPLICATE_SYMBOL (no duplicate symbols allowed)",
+  "signals": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-04-07T10:00:00Z",
+      "event_id": "test-dup-001",
+      "event_title": "Signal 1: BUY EURUSD - Should Succeed",
+      "action": "BUY",
+      "symbol": "EURUSD",
+      "confidence": 0.75,
+      "volume": 1.0,
+      "stop_loss": 1.0850,
+      "take_profit": 1.1050,
+      "rationale": "First EURUSD position",
+      "expected_outcome": "EXECUTED - EURUSD position opened"
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-04-07T10:10:00Z",
+      "event_id": "test-dup-002",
+      "event_title": "Signal 2: BUY EURUSD Again - Should Be Rejected",
+      "action": "BUY",
+      "symbol": "EURUSD",
+      "confidence": 0.70,
+      "volume": 0.5,
+      "stop_loss": 1.0800,
+      "take_profit": 1.1100,
+      "rationale": "Attempt second EURUSD position with different parameters",
+      "expected_outcome": "REJECTED - Position already open in EURUSD",
+      "expected_log_message": "SKIP: Position already open in EURUSD"
+    }
+  ],
+  "test_procedure": [
+    "Ensure no EURUSD position is open",
+    "Send signal 1 (BUY EURUSD) - should execute",
+    "Immediately send signal 2 (BUY EURUSD again) - should be rejected",
+    "Check EA log for duplicate rejection message",
+    "Verify first position is still open (not affected by rejection)",
+    "Close the EURUSD position manually to clean up"
+  ],
+  "success_criteria": [
+    "First EURUSD signal executes successfully",
+    "Second EURUSD signal is rejected",
+    "EA log contains duplicate symbol rejection message",
+    "First position remains open and unaffected",
+    "No execution error on rejection attempt"
+  ],
+  "edge_cases": [
+    "Test with same action (BUY + BUY) - both should reject",
+    "Test with different action (BUY EURUSD then SELL EURUSD) - should reject as position exists",
+    "Test with different volumes and confidence levels"
+  ]
+}

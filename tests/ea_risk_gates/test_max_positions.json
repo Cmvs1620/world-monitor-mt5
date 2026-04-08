@@ -1,0 +1,80 @@
+{
+  "test_name": "Max Concurrent Positions Limit Test",
+  "test_description": "Validates that EA rejects the 4th position when max 3 positions already open",
+  "risk_gate": "MAX_CONCURRENT_POSITIONS (default: 5 in config, test uses 3)",
+  "signals": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-04-07T10:00:00Z",
+      "event_id": "test-max-pos-001",
+      "event_title": "Signal 1: EURUSD - Should Succeed",
+      "action": "BUY",
+      "symbol": "EURUSD",
+      "confidence": 0.8,
+      "volume": 1.0,
+      "stop_loss": 1.0850,
+      "take_profit": 1.1050,
+      "rationale": "First position - should succeed",
+      "expected_outcome": "EXECUTED - Position 1 of 3 opened"
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-04-07T10:05:00Z",
+      "event_id": "test-max-pos-002",
+      "event_title": "Signal 2: GBPUSD - Should Succeed",
+      "action": "BUY",
+      "symbol": "GBPUSD",
+      "confidence": 0.8,
+      "volume": 1.0,
+      "stop_loss": 1.2650,
+      "take_profit": 1.2950,
+      "rationale": "Second position - should succeed",
+      "expected_outcome": "EXECUTED - Position 2 of 3 opened"
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-04-07T10:10:00Z",
+      "event_id": "test-max-pos-003",
+      "event_title": "Signal 3: USDJPY - Should Succeed",
+      "action": "BUY",
+      "symbol": "USDJPY",
+      "confidence": 0.8,
+      "volume": 1.0,
+      "stop_loss": 141.50,
+      "take_profit": 143.50,
+      "rationale": "Third position - should succeed (at max limit)",
+      "expected_outcome": "EXECUTED - Position 3 of 3 opened (at max)"
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-04-07T10:15:00Z",
+      "event_id": "test-max-pos-004",
+      "event_title": "Signal 4: AUDUSD - Should Be Rejected",
+      "action": "BUY",
+      "symbol": "AUDUSD",
+      "confidence": 0.8,
+      "volume": 1.0,
+      "stop_loss": 0.6550,
+      "take_profit": 0.6750,
+      "rationale": "Fourth position - should be rejected (exceeds max)",
+      "expected_outcome": "REJECTED - Already 3 positions open (max: 3)",
+      "expected_log_message": "SKIP: Already 3 positions open (max: 3)"
+    }
+  ],
+  "test_procedure": [
+    "Ensure no positions are open before starting",
+    "Note: Set MAX_CONCURRENT_POSITIONS to 3 in EA input parameters for this test",
+    "Send signal 1 (EURUSD) - should execute",
+    "Wait 30 seconds, send signal 2 (GBPUSD) - should execute",
+    "Wait 30 seconds, send signal 3 (USDJPY) - should execute",
+    "Wait 30 seconds, send signal 4 (AUDUSD) - should be rejected",
+    "Check EA log for rejection message",
+    "Close positions 1, 2, 3 manually to clean up"
+  ],
+  "success_criteria": [
+    "First 3 signals execute successfully with 3 open positions",
+    "4th signal is rejected",
+    "EA log contains rejection message mentioning position limit",
+    "No execution error on 4th signal attempt"
+  ]
+}

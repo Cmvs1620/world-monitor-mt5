@@ -1,0 +1,77 @@
+{
+  "test_name": "Daily Loss Limit Test",
+  "test_description": "Validates that EA rejects new trades when daily loss exceeds MAX_DAILY_LOSS_PERCENT limit",
+  "risk_gate": "MAX_DAILY_LOSS_PERCENT (default: 10% daily loss limit)",
+  "signals": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-04-07T10:00:00Z",
+      "event_id": "test-loss-001",
+      "event_title": "Reference Signal: Set up for loss simulation",
+      "action": "BUY",
+      "symbol": "EURUSD",
+      "confidence": 0.8,
+      "volume": 1.0,
+      "stop_loss": 1.0850,
+      "take_profit": 1.1050,
+      "rationale": "Initial position for loss accumulation",
+      "expected_outcome": "EXECUTED - Position opened",
+      "setup_note": "This position will be manually closed at a loss to simulate daily loss"
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-04-07T10:30:00Z",
+      "event_id": "test-loss-002",
+      "event_title": "Signal After Loss Exceeded - Should Be Rejected",
+      "action": "BUY",
+      "symbol": "GBPUSD",
+      "confidence": 0.8,
+      "volume": 1.0,
+      "stop_loss": 1.2650,
+      "take_profit": 1.2950,
+      "rationale": "Attempt new trade when daily loss limit exceeded",
+      "expected_outcome": "REJECTED - Daily loss exceeded (-10% limit)",
+      "expected_log_message": "SKIP: Daily loss exceeded limit"
+    }
+  ],
+  "test_procedure": [
+    "Start test with balance = $10,000",
+    "Send signal 1 (EURUSD) - should execute",
+    "Manually open and close a losing position to incur -$1,050 loss (10.5% of balance)",
+    "This ensures daily loss = -10.5%, exceeding -10% limit",
+    "Send signal 2 (GBPUSD) - should be rejected",
+    "Check EA log for daily loss rejection message",
+    "Verify EA stops trading until new trading day"
+  ],
+  "success_criteria": [
+    "Signal 1 executes successfully",
+    "After incurring >10% daily loss, signal 2 is rejected",
+    "EA log contains daily loss limit rejection message",
+    "Trading halts until loss is recovered or new day begins",
+    "Message includes actual loss amount and limit"
+  ],
+  "loss_calculation": {
+    "account_balance": 10000.0,
+    "max_daily_loss_percent": 10.0,
+    "max_daily_loss_amount": 1000.0,
+    "test_loss_amount": 1050.0,
+    "test_loss_percent": 10.5,
+    "trigger_condition": "daily_profit (equity - balance) < -max_loss_amount"
+  },
+  "edge_cases": [
+    "Test exactly at limit (10%) - should accept",
+    "Test just below limit (9.9%) - should accept",
+    "Test just above limit (10.1%) - should reject",
+    "Test multiple small losses accumulating to exceed limit",
+    "Test at end of trading day vs start of new day"
+  ],
+  "manual_setup_steps": [
+    "1. Ensure account has $10,000 balance",
+    "2. Set MAX_DAILY_LOSS_PERCENT to 10 in EA parameters",
+    "3. Record opening balance in log",
+    "4. Send first signal to establish baseline",
+    "5. Manually incur $1,050+ loss (e.g., close a position at loss)",
+    "6. Record current equity and daily loss in log",
+    "7. Send second signal (should be rejected)"
+  ]
+}

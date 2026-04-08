@@ -1,0 +1,88 @@
+{
+  "test_name": "Low Confidence Rejection Test",
+  "test_description": "Validates that EA rejects signals with confidence below 0.5 threshold",
+  "risk_gate": "CONFIDENCE_THRESHOLD (minimum 0.5)",
+  "signals": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-04-07T10:00:00Z",
+      "event_id": "test-conf-001",
+      "event_title": "Signal 1: Confidence 0.3 - Should Be Rejected",
+      "action": "BUY",
+      "symbol": "EURUSD",
+      "confidence": 0.3,
+      "volume": 1.0,
+      "stop_loss": 1.0850,
+      "take_profit": 1.1050,
+      "rationale": "Very low confidence - below threshold",
+      "expected_outcome": "REJECTED - Confidence 0.3 below threshold (0.5)",
+      "expected_log_message": "SKIP: Confidence 0.3 below threshold (0.5)"
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-04-07T10:05:00Z",
+      "event_id": "test-conf-002",
+      "event_title": "Signal 2: Confidence 0.45 - Should Be Rejected",
+      "action": "BUY",
+      "symbol": "GBPUSD",
+      "confidence": 0.45,
+      "volume": 1.0,
+      "stop_loss": 1.2650,
+      "take_profit": 1.2950,
+      "rationale": "Just below confidence threshold",
+      "expected_outcome": "REJECTED - Confidence 0.45 below threshold (0.5)",
+      "expected_log_message": "SKIP: Confidence 0.45 below threshold (0.5)"
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-04-07T10:10:00Z",
+      "event_id": "test-conf-003",
+      "event_title": "Signal 3: Confidence 0.5 - Should Be Accepted (Edge Case)",
+      "action": "BUY",
+      "symbol": "USDJPY",
+      "confidence": 0.5,
+      "volume": 1.0,
+      "stop_loss": 141.50,
+      "take_profit": 143.50,
+      "rationale": "Exactly at confidence threshold (inclusive)",
+      "expected_outcome": "EXECUTED - Confidence 0.5 meets minimum threshold"
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-04-07T10:15:00Z",
+      "event_id": "test-conf-004",
+      "event_title": "Signal 4: Confidence 0.75 - Should Be Accepted",
+      "action": "BUY",
+      "symbol": "AUDUSD",
+      "confidence": 0.75,
+      "volume": 1.0,
+      "stop_loss": 0.6550,
+      "take_profit": 0.6750,
+      "rationale": "Good confidence - above threshold",
+      "expected_outcome": "EXECUTED - Confidence 0.75 above threshold"
+    }
+  ],
+  "test_procedure": [
+    "Send signal 1 (confidence 0.3) - should be rejected",
+    "Check EA log for rejection message",
+    "Send signal 2 (confidence 0.45) - should be rejected",
+    "Check EA log for rejection message",
+    "Send signal 3 (confidence 0.5 - edge case) - should execute",
+    "Send signal 4 (confidence 0.75) - should execute",
+    "Close USDJPY and AUDUSD positions manually to clean up"
+  ],
+  "success_criteria": [
+    "Signals with confidence < 0.5 are rejected",
+    "Signals with confidence >= 0.5 are accepted",
+    "Edge case (confidence 0.5) is handled correctly",
+    "EA log messages contain exact confidence values",
+    "No execution errors on rejection"
+  ],
+  "threshold_testing": [
+    "Test 0.49 - should reject",
+    "Test 0.50 - should accept (boundary)",
+    "Test 0.51 - should accept",
+    "Test 0.00 - should reject (minimal)",
+    "Test 1.00 - should accept (maximal)"
+  ]
+}
