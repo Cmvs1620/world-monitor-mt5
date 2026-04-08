@@ -128,7 +128,6 @@ $venvActivate = Join-Path $ProjectRoot "venv\Scripts\Activate.ps1"
 Write-Host "`n[5/6] Installing Python dependencies..." -ForegroundColor Yellow
 $reqFile = Join-Path $ProjectRoot "requirements.txt"
 if (Test-Path $reqFile) {
-    pip install --upgrade pip setuptools wheel -q
     pip install -r $reqFile -q
     Write-Host "[OK] Dependencies installed" -ForegroundColor Green
 } else {
